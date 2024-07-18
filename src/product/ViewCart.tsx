@@ -2,10 +2,12 @@ import useCartStore from "@/store/cart-store";
 
 
 const ViewCart = () => {
-  const { cart, quantity, inc, dec } = useCartStore();
+  const { cart, quantities, inc, dec, removeFromCart, clearCart } =
+    useCartStore();
 
   return (
     <div className="bg-purple-600 text-white h-full py-16 flex flex-col gap-3">
+      <button onClick={clearCart}>Clear All</button>
       {cart.length > 0 ? (
         cart.map((info, index) => (
           <div
@@ -22,7 +24,7 @@ const ViewCart = () => {
               >
                 +
               </button>
-              {quantity}
+              {quantities[info.id] || 1}
               <button
                 className="bg-black text-white px-4"
                 onClick={() => dec(info.id)}
@@ -30,7 +32,10 @@ const ViewCart = () => {
                 -
               </button>
             </div>
-            <p>Price: {info.price * quantity}</p>
+            <p>Price: {info.price * quantities[info.id] || 1}</p>
+            <button onClick={() => removeFromCart(info.id)}>
+              Remove from Cart
+            </button>
           </div>
         ))
       ) : (

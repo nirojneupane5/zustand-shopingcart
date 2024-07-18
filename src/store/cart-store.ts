@@ -11,10 +11,10 @@ type Product = {
 
 type CartStore = {
   cart: Product[];
+  quantities: { [key: number]: number }; // To store quantities of each product
   addToCart: (product: Product) => void;
   removeFromCart: (productId: number) => void;
   clearCart: () => void;
-  quantity: number;
   inc: (productId: number) => void;
   dec: (productId: number) => void;
 };
@@ -22,25 +22,53 @@ type CartStore = {
 //
 const useCartStore = create<CartStore>((set) => ({
   cart: [],
+  quantities: {},
+
   addToCart: (product) =>
     set((state) => {
       const exists = state.cart.find((cart) => cart.id === product.id);
       if (!exists) {
-        return { cart: [...state.cart, product] };
+        return {
+          cart: [...state.cart, product],
+          quantities: { ...state.quantities, [product.id]: 1 },
+        };
       } else {
-        return state;
+        // If product exists, increment its quantity
+        return {
+          quantities: {
+            ...state.quantities,
+            [product.id]: state.quantities[product.id] + 1,
+          },
+        };
       }
     }),
+
   removeFromCart: (productId) =>
+    set((state) => {
+      const newCart = state.cart.filter((product) => product.id !== productId);
+      const { [productId]: _, ...newQuantities } = state.quantities; // Remove the quantity entry
+      return {
+        cart: newCart,
+        quantities: newQuantities,
+      };
+    }),
+
+  clearCart: () => set({ cart: [], quantities: {} }),
+
+  inc: (productId) =>
     set((state) => ({
-      cart: state.cart.filter((product) => product.id !== productId),
+      quantities: {
+        ...state.quantities,
+        [productId]: (state.quantities[productId] || 1) + 1,
+      },
     })),
-  clearCart: () => set({ cart: [] }),
-  quantity: 1,
-  inc: () => set((state) => ({ quantity: state.quantity + 1 })),
-  dec: () =>
+
+  dec: (productId) =>
     set((state) => ({
-      quantity: state.quantity > 1 ? state.quantity - 1 : state.quantity,
+      quantities: {
+        ...state.quantities,
+        [productId]: Math.max(1, (state.quantities[productId] || 1) - 1),
+      },
     })),
 }));
 

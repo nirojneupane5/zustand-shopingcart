@@ -4,11 +4,11 @@ import { product } from "./product";
 import { ShoppingCart } from "lucide-react";
 import ViewCart from "./ViewCart";
 const ViewProduct = () => {
-  const { addToCart } = useCartStore();
-  const [cart, setCart] = useState<boolean>(false);
+  const { addToCart, cart } = useCartStore();
+  const [cartOpen, setCartOpen] = useState<boolean>(false);
 
   const handleCart = () => {
-    setCart(!cart);
+    setCartOpen(!cartOpen);
   };
   return (
     <div className="max-w-[1400px] mx-auto flex">
@@ -19,12 +19,12 @@ const ViewProduct = () => {
           </h1>
           <button onClick={handleCart}>
             <ShoppingCart />
-            Store
+            Store {cart.length}
           </button>
         </div>
         <div
           className={`grid ${
-            cart ? "grid-cols-2" : "grid-cols-3"
+            cartOpen ? "grid-cols-2" : "grid-cols-3"
           } items-center gap-4 py-4`}
         >
           {product &&
@@ -59,7 +59,7 @@ const ViewProduct = () => {
         </div>
       </div>
 
-      {cart && (
+      {cartOpen && (
         <div
           className={`h-screen w-[250px] duration-200 ease-in-out overflow-hidden`}
         >

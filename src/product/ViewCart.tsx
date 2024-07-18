@@ -1,12 +1,12 @@
 import useCartStore from "@/store/cart-store";
-import useQuantityStore from "@/store/quantity-cart";
+
 
 const ViewCart = () => {
-  const { cart } = useCartStore();
-  const { quantity, inc, dec } = useQuantityStore();
+  const { cart, quantity, inc, dec } = useCartStore();
+
   return (
-    <div className="bg-purple-600 text-white h-full py-16">
-      {cart.length > 0 &&
+    <div className="bg-purple-600 text-white h-full py-16 flex flex-col gap-3">
+      {cart.length > 0 ? (
         cart.map((info, index) => (
           <div
             key={index}
@@ -16,17 +16,28 @@ const ViewCart = () => {
             <p>Cateogory: {info.category}</p>
             <div className="flex items-center gap-2">
               {" "}
-              <button className="bg-black text-white px-4" onClick={inc}>
+              <button
+                className="bg-black text-white px-4"
+                onClick={() => inc(info.id)}
+              >
                 +
               </button>
               {quantity}
-              <button className="bg-black text-white px-4" onClick={dec}>
+              <button
+                className="bg-black text-white px-4"
+                onClick={() => dec(info.id)}
+              >
                 -
               </button>
             </div>
             <p>Price: {info.price * quantity}</p>
           </div>
-        ))}
+        ))
+      ) : (
+        <div className="flex items-center justify-center">
+          <h1 className="text-xl font-bold capitalize">No item in cart</h1>
+        </div>
+      )}
     </div>
   );
 };
